@@ -48,7 +48,6 @@ public class JobResource {
     @Produces(MediaType.APPLICATION_JSON)
     public void createJob(@RequestBody String name) throws ApiException {
         BatchV1Api api = new BatchV1Api(kubeClient.getApiClient());
-        List<String> command = Arrays.asList("perl", "-wle", "print \"Hello " + name + " from $ENV{'POD_NAME'}!\"; sleep 60;");
 
         // build job
         V1Job job = new V1JobBuilder()
@@ -65,8 +64,7 @@ public class JobResource {
                     .withNewSpec()
                         .addNewContainer()
                             .withName("hello-world")
-                            .withImage("perl")
-                            .withCommand(command)
+                            .withImage("quay.io/cloudfirst/task-job:latest")
                             .addNewEnv()
                                 .withName("POD_NAME")
                                 .withNewValueFrom()
