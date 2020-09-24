@@ -58,7 +58,7 @@ public class JobResource {
         if (pod != null) {
             System.out.println(pod.getStatus().getPodIP());
 
-            TaskClient taskClient = RestClientBuilder.newBuilder().baseUri(URI.create("http://" + pod.getStatus().getPodIP())).build(TaskClient.class);
+            TaskClient taskClient = RestClientBuilder.newBuilder().baseUri(URI.create("http://" + pod.getStatus().getPodIP() + ":8080")).build(TaskClient.class);
             taskClient.shutdown();
         }
     }
