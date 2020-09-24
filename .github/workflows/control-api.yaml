@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: jacobsee/s2i-github-action@master
       with:
-        path: api
+        path: control-api
         base: registry.access.redhat.com/ubi8/openjdk-11
         output_image: quay.io/cloudfirst/control-api:latest
         image_push_registry: quay.io
