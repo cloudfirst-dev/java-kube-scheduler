@@ -1,0 +1,29 @@
+name: control-api
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - control-api/**
+      - .github/workflows/control-api.yml
+  pull_request:
+    branches: [ master ]
+    paths:
+      - control-api/**
+      - .github/workflows/control-api.yml
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: jacobsee/s2i-github-action@master
+      with:
+        path: api
+        base: registry.access.redhat.com/ubi8/openjdk-11
+        output_image: quay.io/cloudfirst/control-api:latest
+        image_push_registry: quay.io
+        image_push_username: ${{ secrets.DOCKER_USERNAME }}
+        image_push_password: ${{ secrets.DOCKER_PASSWORD }}
