@@ -2,7 +2,6 @@ package dev.cloudfirst.controlapi;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +14,6 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.NoHttpResponseException;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 
@@ -23,11 +21,9 @@ import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.BatchV1Api;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Job;
-import io.kubernetes.client.openapi.models.V1JobList;
-import io.kubernetes.client.openapi.models.V1JobSpecBuilder;
+import io.kubernetes.client.openapi.models.V1JobBuilder;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
-import io.kubernetes.client.openapi.models.V1JobBuilder;
 
 @Path("/control-api/jobs")
 public class JobResource {
@@ -62,7 +58,9 @@ public class JobResource {
             try {
                 TaskClient taskClient = RestClientBuilder.newBuilder().baseUri(URI.create("http://" + pod.getStatus().getPodIP() + ":8080")).build(TaskClient.class);
                 taskClient.shutdown();
-            } catch (ProcessingException ex) {}
+            } catch (ProcessingException ex) {
+                // don't do this i'm just lazy not making the call in the task example to wait for requests to process before shutting down
+            }
         }
     }
 
