@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-api
+spec:
+  selector:
+    matchLabels:
+      app: control-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: control-api
+    spec:
+      serviceAccountName: control-api
+      containers:
+        - name: control-api
+          image: quay.io/cloudfirst/control-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
