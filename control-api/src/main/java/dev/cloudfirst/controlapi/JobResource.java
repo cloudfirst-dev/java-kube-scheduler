@@ -1,5 +1,6 @@
 package dev.cloudfirst.controlapi;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,9 +10,11 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.BatchV1Api;
@@ -42,6 +45,22 @@ public class JobResource {
         }
 
         return jobs;
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{podName}")
+    public void shutdown(@PathParam("podName") String podName) throws ApiException {
+        CoreV1Api api = new CoreV1Api(kubeClient.getApiClient());
+
+        V1Pod pod = api.readNamespacedPod(podName, System.getenv("POD_NAMESPACE"), null, null, null);
+
+        if (pod != null) {
+            System.out.println(pod.getStatus().getPodIP());
+
+            TaskClient taskClient = RestClientBuilder.newBuilder().baseUri(URI.create("http://" + pod.getStatus().getPodIP())).build(TaskClient.class);
+            taskClient.shutdown();
+        }
     }
 
     @POST
